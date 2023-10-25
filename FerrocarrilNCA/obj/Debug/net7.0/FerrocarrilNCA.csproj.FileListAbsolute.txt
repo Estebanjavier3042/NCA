@@ -74,3 +74,5 @@ C:\Users\Esteban\Desktop\cosas de vs\FerrocarrilNCA\FerrocarrilNCA\obj\Debug\net
 C:\Users\Esteban\Desktop\cosas de vs\FerrocarrilNCA\FerrocarrilNCA\obj\Debug\net7.0\FerrocarrilNCA.pdb
 C:\Users\Esteban\Desktop\cosas de vs\FerrocarrilNCA\FerrocarrilNCA\obj\Debug\net7.0\FerrocarrilNCA.genruntimeconfig.cache
 C:\Users\Esteban\Desktop\cosas de vs\FerrocarrilNCA\FerrocarrilNCA\obj\Debug\net7.0\ref\FerrocarrilNCA.dll
+C:\Users\Esteban\Desktop\cosas de vs\FerrocarrilNCA\FerrocarrilNCA\bin\Debug\net7.0\AutoMapper.dll
+C:\Users\Esteban\Desktop\cosas de vs\FerrocarrilNCA\FerrocarrilNCA\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

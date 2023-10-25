@@ -12,39 +12,17 @@ namespace FerrocarrilNCA.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Empleados",
-                columns: table => new
-                {
-                    Legajo = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<int>(type: "int", nullable: false),
-                    Apellido = table.Column<int>(type: "int", nullable: false),
-                    FechaIngreso = table.Column<DateTime>(type: "date", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Empleados", x => x.Legajo);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "BaseOperativas",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Descripcion = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    Ubicacion = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    EmpleadoId = table.Column<int>(type: "int", nullable: false)
+                    Ubicacion = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BaseOperativas", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_BaseOperativas_Empleados_EmpleadoId",
-                        column: x => x.EmpleadoId,
-                        principalTable: "Empleados",
-                        principalColumn: "Legajo",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -54,15 +32,58 @@ namespace FerrocarrilNCA.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Descripcion = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    Item = table.Column<int>(type: "int", nullable: false),
-                    empleadoId = table.Column<int>(type: "int", nullable: false)
+                    Item = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Servicios", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Empleados",
+                columns: table => new
+                {
+                    Legajo = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Apellido = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    FechaIngreso = table.Column<DateTime>(type: "date", nullable: false),
+                    BaseOperativaId = table.Column<int>(type: "int", nullable: false),
+                    ServicioId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Empleados", x => x.Legajo);
                     table.ForeignKey(
-                        name: "FK_Servicios_Empleados_empleadoId",
-                        column: x => x.empleadoId,
+                        name: "FK_Empleados_BaseOperativas_BaseOperativaId",
+                        column: x => x.BaseOperativaId,
+                        principalTable: "BaseOperativas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Empleados_Servicios_ServicioId",
+                        column: x => x.ServicioId,
+                        principalTable: "Servicios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categorias",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Descripcion = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Art2000 = table.Column<bool>(type: "bit", nullable: false),
+                    EmpleadoId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categorias", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Categorias_Empleados_EmpleadoId",
+                        column: x => x.EmpleadoId,
                         principalTable: "Empleados",
                         principalColumn: "Legajo",
                         onDelete: ReferentialAction.Cascade);
@@ -90,16 +111,20 @@ namespace FerrocarrilNCA.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_BaseOperativas_EmpleadoId",
-                table: "BaseOperativas",
+                name: "IX_Categorias_EmpleadoId",
+                table: "Categorias",
                 column: "EmpleadoId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Servicios_empleadoId",
-                table: "Servicios",
-                column: "empleadoId",
-                unique: true);
+                name: "IX_Empleados_BaseOperativaId",
+                table: "Empleados",
+                column: "BaseOperativaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Empleados_ServicioId",
+                table: "Empleados",
+                column: "ServicioId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sueldos_EmpleadoId",
@@ -112,16 +137,19 @@ namespace FerrocarrilNCA.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BaseOperativas");
-
-            migrationBuilder.DropTable(
-                name: "Servicios");
+                name: "Categorias");
 
             migrationBuilder.DropTable(
                 name: "Sueldos");
 
             migrationBuilder.DropTable(
                 name: "Empleados");
+
+            migrationBuilder.DropTable(
+                name: "BaseOperativas");
+
+            migrationBuilder.DropTable(
+                name: "Servicios");
         }
     }
 }

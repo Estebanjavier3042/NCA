@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FerrocarrilNCA.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231024011458_Inicial")]
+    [Migration("20231024032632_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -38,9 +38,6 @@ namespace FerrocarrilNCA.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<int>("EmpleadoId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Ubicacion")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -48,10 +45,34 @@ namespace FerrocarrilNCA.Migrations
 
                     b.HasKey("Id");
 
+                    b.ToTable("BaseOperativas");
+                });
+
+            modelBuilder.Entity("FerrocarrilNCA.Entidades.Categoria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Art2000")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("EmpleadoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
                     b.HasIndex("EmpleadoId")
                         .IsUnique();
 
-                    b.ToTable("BaseOperativas");
+                    b.ToTable("Categorias");
                 });
 
             modelBuilder.Entity("FerrocarrilNCA.Entidades.Empleado", b =>
@@ -62,16 +83,30 @@ namespace FerrocarrilNCA.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Legajo"));
 
-                    b.Property<int>("Apellido")
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("BaseOperativaId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("FechaIngreso")
                         .HasColumnType("date");
 
-                    b.Property<int>("Nombre")
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("ServicioId")
                         .HasColumnType("int");
 
                     b.HasKey("Legajo");
+
+                    b.HasIndex("BaseOperativaId");
+
+                    b.HasIndex("ServicioId");
 
                     b.ToTable("Empleados");
                 });
@@ -89,16 +124,10 @@ namespace FerrocarrilNCA.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<int>("Item")
-                        .HasColumnType("int");
-
-                    b.Property<int>("empleadoId")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Item")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("empleadoId")
-                        .IsUnique();
 
                     b.ToTable("Servicios");
                 });
@@ -128,26 +157,34 @@ namespace FerrocarrilNCA.Migrations
                     b.ToTable("Sueldos");
                 });
 
-            modelBuilder.Entity("FerrocarrilNCA.Entidades.BaseOperativa", b =>
+            modelBuilder.Entity("FerrocarrilNCA.Entidades.Categoria", b =>
                 {
                     b.HasOne("FerrocarrilNCA.Entidades.Empleado", "EmpleadoNavegation")
-                        .WithOne("BaseOperativaNavegation")
-                        .HasForeignKey("FerrocarrilNCA.Entidades.BaseOperativa", "EmpleadoId")
+                        .WithOne("CategoriaNavegation")
+                        .HasForeignKey("FerrocarrilNCA.Entidades.Categoria", "EmpleadoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("EmpleadoNavegation");
                 });
 
-            modelBuilder.Entity("FerrocarrilNCA.Entidades.Servicio", b =>
+            modelBuilder.Entity("FerrocarrilNCA.Entidades.Empleado", b =>
                 {
-                    b.HasOne("FerrocarrilNCA.Entidades.Empleado", "EmpleadoNavegation")
-                        .WithOne("ServicioNavegation")
-                        .HasForeignKey("FerrocarrilNCA.Entidades.Servicio", "empleadoId")
+                    b.HasOne("FerrocarrilNCA.Entidades.BaseOperativa", "BaseOperativaNavegation")
+                        .WithMany("EmpleadoNavegation")
+                        .HasForeignKey("BaseOperativaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("EmpleadoNavegation");
+                    b.HasOne("FerrocarrilNCA.Entidades.Servicio", "ServicioNavegation")
+                        .WithMany("EmpleadoNavegation")
+                        .HasForeignKey("ServicioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BaseOperativaNavegation");
+
+                    b.Navigation("ServicioNavegation");
                 });
 
             modelBuilder.Entity("FerrocarrilNCA.Entidades.Sueldo", b =>
@@ -161,16 +198,23 @@ namespace FerrocarrilNCA.Migrations
                     b.Navigation("EmpleadoNavegation");
                 });
 
+            modelBuilder.Entity("FerrocarrilNCA.Entidades.BaseOperativa", b =>
+                {
+                    b.Navigation("EmpleadoNavegation");
+                });
+
             modelBuilder.Entity("FerrocarrilNCA.Entidades.Empleado", b =>
                 {
-                    b.Navigation("BaseOperativaNavegation")
-                        .IsRequired();
-
-                    b.Navigation("ServicioNavegation")
+                    b.Navigation("CategoriaNavegation")
                         .IsRequired();
 
                     b.Navigation("SueldoNavegation")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FerrocarrilNCA.Entidades.Servicio", b =>
+                {
+                    b.Navigation("EmpleadoNavegation");
                 });
 #pragma warning restore 612, 618
         }

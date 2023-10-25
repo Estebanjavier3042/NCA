@@ -7,7 +7,7 @@
         public string Ubicacion { get; set; }
 
         //foranea Empleado
-        public int EmpleadoId { get; set;}
-        public Empleado EmpleadoNavegation { get; set; }    
+        
+        public List<Empleado> EmpleadoNavegation { get; set; }    
     }
 }
